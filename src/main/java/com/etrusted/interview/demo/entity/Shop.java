@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity(name = "shop")
 @Table(name = "shop")
@@ -16,6 +17,7 @@ public class Shop {
   private Long id;
 
   @Column(name = "url")
+  @Size(max = 255, message="url is limited to 255")
   private String url;
 
   public Long getId() {

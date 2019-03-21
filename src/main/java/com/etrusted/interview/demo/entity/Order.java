@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity(name = "order")
 @Table(name = "shop_order")
@@ -20,6 +21,7 @@ public class Order {
   private Long id;
 
   @Column(name = "order_reference")
+  @Size(max = 255, message="reference max length is 255")
   private String orderReference;
 
   @ManyToOne

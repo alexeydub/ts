@@ -55,6 +55,7 @@ public class OrderService {
     Page<Order> page = orderRepository.findAll(spec, pageRequest);
     return page.stream().collect(Collectors.toList());
   }
+
   /**
    * Create an order based on order request.
    *
@@ -80,12 +81,7 @@ public class OrderService {
     Shop shop = findOrCreateShop(orderRequest.getShopURL());
 
     // validate "cash on delivery"
-    // TODO extract method
-    if (PaymentType.CASH_ON_DELIVERY.equals(PaymentType.valueOf(orderRequest.getPaymentType()))) {
-      if (Strings.isBlank(user.getAddress())) {
-        throw new IllegalArgumentException("address can't be found!");
-      }
-    }
+    paymentSpecificValidation(orderRequest, user);
 
     // create an order
     Order order = new Order();
@@ -98,6 +94,14 @@ public class OrderService {
     orderResponse.setId(order.getId());
     return orderResponse;
   }
+
+  private void paymentSpecificValidation(OrderRequest orderRequest, User user) {
+    if (PaymentType.CASH_ON_DELIVERY.equals(PaymentType.valueOf(orderRequest.getPaymentType()))) {
+      if (Strings.isBlank(user.getAddress())) {
+        throw new IllegalArgumentException("address can't be found!");
+      }
+    }
+  }
   
   private User findOrCreateUser(OrderRequest orderRequest) {
     String email = orderRequest.getEmail().toLowerCase();
@@ -105,16 +109,7 @@ public class OrderService {
     if (userOpt.isPresent()) { // found?
       User user = userOpt.get();
       // update user if necessary
-      // TODO other fields
-      boolean update = false;
-      String address = orderRequest.getAddress();
-      if (!(Strings.isBlank(address) || address.equalsIgnoreCase(user.getAddress()))) {
-        user.setAddress(address);
-      }
-      if (update) {
-        return userRepository.save(user);
-      }
-      return user;
+      return updateUser(orderRequest, user);
     } else {
       // create a new one
       User user = new User();
@@ -124,6 +119,29 @@ public class OrderService {
       user.setLastName(orderRequest.getLastName());
       return userRepository.save(user);
     }
+  }
+
+  private User updateUser(OrderRequest orderRequest, User user) {
+    boolean update = false;
+    String address = orderRequest.getAddress();
+    if (!(Strings.isBlank(address) || address.equalsIgnoreCase(user.getAddress()))) {
+      user.setAddress(address);
+      update = true;
+    }
+    String firstName = orderRequest.getFirstName();
+    if (!(Strings.isBlank(firstName) || firstName.equalsIgnoreCase(user.getFirstName()))) {
+      user.setFirstName(firstName);
+      update = true;
+    }
+    String lastName = orderRequest.getLastName();
+    if (!(Strings.isBlank(lastName) || lastName.equalsIgnoreCase(user.getLastName()))) {
+      user.setLastName(lastName);
+      update = true;
+    }
+    if (update) {
+      return userRepository.save(user);
+    }
+    return user;
   }
   
   private Shop findOrCreateShop(String shopUrl) {
