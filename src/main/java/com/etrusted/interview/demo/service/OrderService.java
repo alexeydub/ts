@@ -2,6 +2,7 @@ package com.etrusted.interview.demo.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
@@ -11,7 +12,10 @@ import java.util.LinkedList;
 
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.etrusted.interview.demo.entity.Order;
 import com.etrusted.interview.demo.entity.PaymentType;
@@ -35,6 +39,22 @@ public class OrderService {
   @Autowired
   private ShopRepository shopRepository;
   
+  /**
+   * Retrieve paginated orders for shop with shopId.
+   *
+   * @param shopId shop
+   * @param limit page size
+   * @param offset offset
+   * @return order list
+   */
+  public List<Order> getOrdersByShop(Long shopId, int limit, int offset) {
+    PageRequest pageRequest = PageRequest.of(offset, limit);
+    Specification<Order> spec = (root, query, cb) -> {
+      return cb.equal(root.get("shop").get("id"), shopId);
+    };
+    Page<Order> page = orderRepository.findAll(spec, pageRequest);
+    return page.stream().collect(Collectors.toList());
+  }
   /**
    * Create an order based on order request.
    *
