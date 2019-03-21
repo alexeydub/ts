@@ -8,11 +8,18 @@ package com.etrusted.interview.demo.rest;
 import com.etrusted.interview.demo.rest.dto.Alive;
 import com.etrusted.interview.demo.rest.dto.OrderRequest;
 import com.etrusted.interview.demo.rest.dto.OrderResponse;
+import com.etrusted.interview.demo.service.OrderService;
+
+import javax.validation.ConstraintViolationException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * OrderRest
@@ -22,8 +29,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class OrderRest {
 
-  public ResponseEntity<OrderResponse> createOrder(OrderRequest orderRequest) {
-    return null;
+  @Autowired
+  private OrderService orderService;
+
+  @RequestMapping(value = "/api/orders", method = RequestMethod.POST)
+  public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) {
+    try {
+      return new ResponseEntity<>(orderService.createOrder(orderRequest),
+          HttpStatus.OK);
+    } catch (IllegalArgumentException | ConstraintViolationException error) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          error.getMessage());
+    }
   }
 
   @RequestMapping(value = "/alive", method = RequestMethod.GET)

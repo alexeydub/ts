@@ -6,6 +6,8 @@ public class OrderRequest {
   private String firstName;
   private String lastName;
   private String email;
+  private String paymentType;
+  private String address;
 
   public String getShopURL() {
     return shopURL;
@@ -45,5 +47,21 @@ public class OrderRequest {
 
   public void setEmail(String email) {
     this.email = email;
+  }
+
+  public String getPaymentType() {
+    return paymentType;
+  }
+
+  public void setPaymentType(String paymentType) {
+    this.paymentType = paymentType;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
   }
 }

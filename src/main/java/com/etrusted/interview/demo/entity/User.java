@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity(name = "user")
 @Table(name = "user")
@@ -15,13 +16,21 @@ public class User {
   @Column(name = "id")
   private Long id;
 
-  @Column private String firstName;
+  @Column
+  @Size(max = 255, message="first name max length is 255")
+  private String firstName;
 
-  @Column private String lastName;
+  @Column
+  @Size(max = 255, message="last name max length is 255")
+  private String lastName;
 
-  @Column private String email;
+  @Column
+  @Size(max = 255, message="email max length is 255")
+  private String email;
 
-  @Column private String address;
+  @Column
+  @Size(max = 255, message="address max length is 255")
+  private String address;
 
   public Long getId() {
     return id;

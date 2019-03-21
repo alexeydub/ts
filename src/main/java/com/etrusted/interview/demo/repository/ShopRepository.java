@@ -6,6 +6,9 @@
 package com.etrusted.interview.demo.repository;
 
 import com.etrusted.interview.demo.entity.Shop;
+
+import java.util.Optional;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +18,6 @@ import org.springframework.stereotype.Repository;
  * @author created by trumga2 8 Sep 2018 10:52:18
  */
 @Repository
-public interface ShopRepository extends CrudRepository<Shop, Long> {}
+public interface ShopRepository extends CrudRepository<Shop, Long> {
+  Optional<Shop> findByUrl(String url);
+}
